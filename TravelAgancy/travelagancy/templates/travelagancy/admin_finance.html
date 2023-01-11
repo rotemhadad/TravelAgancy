@@ -1,0 +1,47 @@
+{% extends 'travelagancy/base.html' %}
+{% block login_display %}
+    <a href="#">Welcome admin</a>
+{% endblock %}
+
+
+{% block content %}
+
+
+
+    <div class="container-fluid col-sm-12" style="margin-top: 20px">
+        <a class="btn btn-success" href="{% url 'travelagancy:add_flight' %}">Add a Flight</a>
+        {% comment %} <a class="btn btn-success" href="{% url 'travelagancy:countries_management' %}">Countries management</a> {% endcomment %}
+        <h1>{{ all_seats.row }}</h1>
+        </div>
+
+        <div class="book_orders" style="margin-left: 20px;margin-right: 20px">
+            <div class="col-sm-12" style="background-color: white">
+                <h1>Order list</h1>
+                <div>
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                        <th style="text-align: center">Number</th>
+                        <th style="text-align: center">User Ordered</th>
+                        <th style="text-align: center">Flight</th>
+                        <th style="text-align: center">Track</th>
+                        <th style="text-align: center">Date & Time</th>
+                        <th style="text-align: center">Flight price</th>
+                        </thead>
+                        <tbody align="center">
+                        {% for order in order_set %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ order.passenger_name }}</td>
+                                <td>{{ order.flight_name }}</td>
+                                <td>{{ order.flight_route }}</td>
+                                <td>{{ order.flight_ltime }}</td>
+                                <td>{{ order.flight_price }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

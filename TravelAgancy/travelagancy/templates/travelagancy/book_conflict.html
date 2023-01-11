@@ -1,0 +1,24 @@
+{% extends 'travelagancy/base.html' %}
+
+{% block login_display %}
+    <a href="#">Welcome {{ username }}</a>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid" style="margin-top: 20px">
+        <div class="alert" style="background-color: white;overflow: hidden"> 
+            <h1>dear passenger</h1>
+            <div id="info_body" style="margin-left: 50px;margin-right: 50px">
+                <p>
+                    no available seats！
+                </p>
+            </div>
+
+            <li>
+                <a href="{% url 'travelagancy:showall' %}">
+                    <span class="glyphicon glyphicon-plane" aria-hidden="true"></span>&nbsp; show all flights
+                </a>
+            </li>
+        </div>
+    </div>
+{% endblock %}

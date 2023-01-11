@@ -1,0 +1,51 @@
+{% extends 'travelagancy/base.html' %}
+
+{% block login_display %}
+    <a href="#">Welcome {{ username }}</a> 
+{% endblock %}
+
+{% block style %}
+<style>
+
+.header {
+  padding: 70px;
+  text-align: center;
+  background: #4682B4;
+  color: white;
+  font-size: 30px;
+}
+</style>
+
+    {% endblock %}
+
+{% block content %}
+
+<div class="header">
+<h1> Dear {{username}}</h1>
+<h2 style:bold>The payment went through successfully! Here you can see all the data for your purchases :</h2>
+<br>
+
+{% for p in psgs %}
+    
+   {{p.first_name}} 
+    {{p.last_name}} 
+   {{p.ps_id}} 
+  {{ p.ps_number}}  
+   {{flight.name}}  
+   seats in:
+{%for s in  p.seat.all%}
+    {{ s.row}}
+    {{ s.seat_letter}}
+{% endfor %}
+   <br>
+   <br>
+    
+{% endfor %}
+    <center>
+        <a style="color:black" type="button" class="btn btn-light" href="{% url 'travelagancy:index' %}">Back to HomePage</a>
+        </center>
+</div>
+
+
+
+{% endblock %}

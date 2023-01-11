@@ -1,0 +1,101 @@
+{% extends 'travelagancy/base.html' %}
+
+{% block js %}
+<script>
+
+</script>
+{% endblock %}
+
+{% block content %}
+<strong id="remain_seats" style="display: none">{{ amount_of_seats }}</strong>
+<h1 style="margin: 0 auto; width:250px;"> Checkout </h1>
+
+
+
+<form action="{% url 'travelagancy:pay' flight.id amount_of_seats %}" method="POST">
+{% csrf_token %}
+
+{% with ''|center:amount_of_seats as range %}
+{% for i in range %}
+<div style="display:flex; justify-content: center; ">
+<h5> passenger  {{ forloop.counter }}:</h5>
+<input type="text" placeholder="First Name" class="input" name="first_name" id = "first_name" value="" required />
+<input type="text" placeholder="Last Name" class="input" name="last_name" id = "last_name" value=""  required />
+<input type="number"  placeholder="ID" class="input" name="ID" id = "ID" value="" required />
+<input type="number"  placeholder="Passport Number" class="input" name="ps_num" id = "ps_num" value="" required />
+ <br>
+ </div>
+  {% endfor %}
+  {% endwith %}
+
+<br>
+<h3 style="margin: 0 auto; width:500px;">choose seats(only available shows): </h3>
+<br>
+<style>
+    .flex-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  
+    .flex-item {
+      width: 16.666666666666664%; /* 6 items in a row */
+    }
+
+
+  </style>
+
+<div class="flex-container">
+
+{% for seat in seats %}
+  {% if not seat.busy %} 
+    <center>
+      <div style="display:flex; flex-direction: row; justify-content: center; align-items: center">
+            <input class="flex-item" type="checkbox" name='chosen' value="{{ seat.id }}" id="{{ seat.id }}"  style="background-color:rgb(152, 152, 152); width:40px; height:40px;"/>
+            <div style="font-size:larger ;background-color:	#4682B4; width:35px; height:35px;">{{seat.row}}{{seat.seat_letter}} </div>
+        </div>
+      </center>
+  {% endif %}
+{% endfor %}
+
+
+
+
+</div>
+<br>
+<div style="display:flex; flex-direction: row; justify-content: center; align-items: center">
+  <button style="display: flex; justify-content: center;" class="btn btn-primary" type="submit" disabled id = myButton >Pay with credit card</button>
+</div>
+
+</form>
+
+        <script>
+            var array = [];
+            var limitcap = document.getElementById('remain_seats').innerHTML;
+            var button = document.getElementById("myButton");
+            $("input").change(function () {
+                if ($(this).is(":checked")) {
+                    array.push(this.id);
+                    if (array.length > limitcap) {
+                        array.splice(0, 1); 
+                        button.disabled = false;
+                    }
+                    if (array.length < limitcap) {  
+                        button.disabled = true;
+                    }
+                    if (array.length == limitcap) {  
+                        button.disabled = false;
+                    }
+
+                    $("input").prop("checked", false);
+                    for (var i = 0; i < array.length; i++) {
+                        $("#" + array[i]).prop("checked", true);
+                    }
+                }
+                else {
+                    var index = array.indexOf(this.id);
+                    array.splice(index, 1);
+                }
+            });
+        </script>
+{% endblock %}
+

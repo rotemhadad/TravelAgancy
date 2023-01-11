@@ -1,0 +1,24 @@
+{% extends 'travelagancy/base.html' %}
+{% block login_display %}
+    <a href="#">Welcome admin</a>
+{% endblock %}
+{% block content %}
+<div class="container-fluid" style="position:absolute;margin-top:0%;width: 35%;left: 5%">
+    <h1 style="color: rgb(6, 6, 6)">U can change the price for {{ flight.name }}:</h1>
+    <br>
+    <form class="form-horizontal" role="form" action="{% url 'travelagancy:change_flight' flight.id %}" method="post" >
+        {% csrf_token %}
+        <div class="input-group">
+            <label for="price" class="input-group-addon">Price</label> 
+            <input id="price" type="text" name="price" class="control" placeholder="Price" required>
+        </div>
+            {% csrf_token %}
+            <div class="form-group">
+                <div align="center">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+            </div>
+      </form>
+
+
+{% endblock %}

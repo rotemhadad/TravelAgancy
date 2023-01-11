@@ -1,0 +1,106 @@
+{% extends 'travelagancy/base.html' %}
+{% block login_display %}
+    <a href="#">Welcome admin</a>
+{% endblock %}
+
+{% comment %} {% block js %}
+<script>
+    datePickerId.max = new Date().toISOString().split("T")[0];
+    $(document).ready(function() {
+        $('#datetimepicker1').datetimepicker({format : "DD/MM/YYYY",maxDate: "-1d"});
+} );
+</script>
+
+{% endblock %}  {% endcomment %}
+
+
+
+{% block content %}
+<div class="container-fluid" style="position:absolute;margin-top:0%;width: 35%;left: 5%">
+    <h1 style="color: rgb(6, 6, 6)">Add new flight:</h1>
+    <br>
+    <form class="form-horizontal" role="form" action="{% url 'travelagancy:add_flight' %}" method="post" >
+        {% csrf_token %}
+
+
+        <!-- <select class="form-select" aria-label="Default select example">
+            <option selected>Open this select menu</option>
+            {% for country in c_list %}
+                <option value="{{ forloop.counter }}">{country.name}</option>
+            {% endfor %}
+          </select>
+ -->
+
+        <div class="input-group">
+            <label for="leave_city" class="input-group-addon">Departure country</label> 
+            <select id="leave_city" name="leave_city" class="form-control" required>
+                {% include "travelagancy/countrylist.html" %}
+            </select>
+        </div>
+        <br>
+
+<div class="input-group">
+            <label for="arrive_city" class="input-group-addon">Arrive country</label> 
+            <select id="arrive_city" name="arrive_city" class="form-control" required>
+                {% include "travelagancy/countrylist.html" %}
+            </select>
+        </div>
+        <br>
+        <div class="input-group">
+            <label for="name" class="input-group-addon">name</label>
+            <input id="name" type="text" name="name" class="form-control" placeholder="name" required>
+        </div>
+        <br>
+        <div class="input-group">
+            <label for="leave_airport" class="input-group-addon">leave airport</label>
+            <input  id="datePickerId" type="text" name="leave_airport" class="form-control" placeholder="leave_airport" required>
+        </div>
+        <br>
+                <div class="input-group">
+            <label for="arrive_airport" class="input-group-addon">arrive airport</label>
+            <input id="arrive_airport" type="text" name="arrive_airport" class="form-control" placeholder="arrive_airport" required>
+        </div>
+        <br>
+        <div class="input-group">
+            <label for="leave_time" class="input-group-addon">leave time</label>
+            <input id="leave_time" type="datetime-local" name="leave_time" step="any" min='{{now}}' class="form-control" placeholder="leave_time" required>
+        </div>
+        <br>
+         <div class="input-group">
+            <label for="arrive_time" class="input-group-addon">arrive time</label>
+            <input id="arrive_time" type="datetime-local" name="arrive_time" step="any" min='{{now}}' class="form-control" placeholder="arrive_time" required>
+        </div>
+        <br>
+
+{% comment %} 
+        <div class="col-sm-3">
+            <span class="ico_search_type ico_search_ldate"></span><br>
+            <input class="my_input" type="date" id="leave_date" name="leave_date" placeholder="Date"
+                    value="{{ leave_date }}" min='{{now}}'>
+        </div> {% endcomment %}
+
+
+        <div class="input-group">
+            <label for="num_of_rows" class="input-group-addon">num_of_rows</label>
+            <input id="num_of_rows" type="number" name="num_of_rows" class="form-control" placeholder="num_of_rows" min="1" required>
+        </div>
+        <br>
+        <div class="input-group">
+            <label for="seats_in_row" class="input-group-addon">seats_in_row</label>
+            <input id="seats_in_row" type="number" name="seats_in_row" class="form-control" placeholder="seats_in_row" min="1" max="20" required>
+        </div>
+        <br>
+            <div class="input-group">
+            <label for="price" class="input-group-addon">price in Shekel</label>
+            <input id="price" type="number" name="price" class="form-control" placeholder="price" required>
+        </div>
+        <br>
+
+<div class="form-row field-leave_time">
+
+        <center>
+            <button onclick="alert('Successfully added a flight!')" type="submit" class="btn btn-success">Let's Go</button>
+        </center>
+    </form>
+</div>
+{% endblock %}

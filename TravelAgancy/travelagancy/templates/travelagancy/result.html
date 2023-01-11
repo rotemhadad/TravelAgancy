@@ -1,0 +1,767 @@
+{% extends 'travelagancy/base.html' %}
+
+{% block login_display %}
+    <a href="#">Welcome {{ username }}</a>
+{% endblock %}
+
+{% block style %}
+
+    <style>
+
+        .main {
+            margin-left: 50px;
+            margin-right: 50px;
+        }
+
+        .search_form {
+            background-color: white;
+            margin-top: 25px;
+            height: 125px;
+        }
+
+        .search_head {
+            background-color: #f1f1f1;
+            margin-top: 10px;
+            height: 30px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .search_result_by_ltime { 
+            background-color: #f1f1f1;
+            margin-top: 10px;
+        }
+
+        .search_result_by_price { 
+            background-color: #f1f1f1;
+            margin-top: 10px;
+        }
+
+        .one_line {
+            background-color: white;
+            height: 110px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .ico_search_type {
+            display: inline-block; 
+            width: 20px;
+            height: 20px;
+            background: url('http://pic.c-ctrip.com/flight/searchlist/icon_search_select.png') no-repeat;
+        }
+
+        .ico_search_lcity {
+            background-position: 0 0;
+        }
+
+        .ico_search_acity {
+            background-position: 0 -20px;
+        }
+
+        .ico_search_ldate {
+            background-position: 0 -40px;
+        }
+
+        .my_input {
+            position: absolute;
+            width: 80%;
+        }
+
+        .btn-warning {
+            background-color: #ffb000;
+        }
+
+        .flight_name {
+            line-height: 90px;
+            font-size: x-large;
+            font-weight: bold;
+        }
+
+
+    </style>
+{% endblock %}
+
+{% block js %}
+    <script>
+        function search_by_ltime() {
+            document.getElementById("result_by_ltime").style.display = "block";
+            document.getElementById("result_by_atime").style.display = "none";
+            document.getElementById("result_by_price").style.display = "none";
+            document.getElementById("result_by_pricedown").style.display = "none";
+            document.getElementById("result_by_rate").style.display = "none";
+
+        }
+        function search_by_atime() {
+            document.getElementById("result_by_ltime").style.display = "none";
+            document.getElementById("result_by_atime").style.display = "block";
+            document.getElementById("result_by_price").style.display = "none";
+            document.getElementById("result_by_pricedown").style.display = "none";
+            document.getElementById("result_by_rate").style.display = "none";
+        }
+        function search_by_price() {
+            document.getElementById("result_by_ltime").style.display = "none";
+            document.getElementById("result_by_atime").style.display = "none";
+            document.getElementById("result_by_price").style.display = "block";
+            document.getElementById("result_by_pricedown").style.display = "none";
+            document.getElementById("result_by_rate").style.display = "none";     
+        }
+        function search_by_pricedown() {
+            document.getElementById("result_by_ltime").style.display = "none";
+            document.getElementById("result_by_atime").style.display = "none";
+            document.getElementById("result_by_price").style.display = "none";
+            document.getElementById("result_by_pricedown").style.display = "block"; 
+            document.getElementById("result_by_rate").style.display = "none";       
+        }    
+        function search_by_rate() {
+            document.getElementById("result_by_ltime").style.display = "none";
+            document.getElementById("result_by_atime").style.display = "none";
+            document.getElementById("result_by_price").style.display = "none";
+            document.getElementById("result_by_pricedown").style.display = "none";
+            document.getElementById("result_by_rate").style.display = "block";
+
+        }
+
+
+        function back_search_by_ltime() {
+            document.getElementById("back_result_by_ltime").style.display = "block";
+            document.getElementById("back_result_by_atime").style.display = "none";
+            document.getElementById("back_result_by_price").style.display = "none";
+            document.getElementById("back_result_by_pricedown").style.display = "none";
+            document.getElementById("back_result_by_rate").style.display = "none";
+        }
+        function back_search_by_atime() {
+            document.getElementById("back_result_by_ltime").style.display = "none";
+            document.getElementById("back_result_by_atime").style.display = "block";
+            document.getElementById("back_result_by_price").style.display = "none";
+            document.getElementById("back_result_by_pricedown").style.display = "none";
+            document.getElementById("back_result_by_rate").style.display = "none";
+        }
+        function back_search_by_price() {
+            document.getElementById("back_result_by_ltime").style.display = "none";
+            document.getElementById("back_result_by_atime").style.display = "none";
+            document.getElementById("back_result_by_price").style.display = "block";
+            document.getElementById("back_result_by_pricedown").style.display = "none"; 
+            document.getElementById("back_result_by_rate").style.display = "none";       
+        }
+        function back_search_by_pricedown() {
+            document.getElementById("back_result_by_ltime").style.display = "none";
+            document.getElementById("back_result_by_atime").style.display = "none";
+            document.getElementById("back_result_by_price").style.display = "none";
+            document.getElementById("back_result_by_pricedown").style.display = "block";  
+            document.getElementById("back_result_by_rate").style.display = "none";      
+        } 
+        function back_search_by_rate() {
+            document.getElementById("back_result_by_ltime").style.display = "none";
+            document.getElementById("back_result_by_atime").style.display = "none";
+            document.getElementById("back_result_by_price").style.display = "none";
+            document.getElementById("back_result_by_pricedown").style.display = "none";  
+            document.getElementById("back_result_by_rate").style.display = "block";      
+        } 
+    </script>
+{% endblock %}
+
+
+
+{% block content %}
+
+
+    <div class="main">
+
+        <div class="search_form">
+            <div class="col-sm-12" style="margin-top: 20px">
+                <form action="{% url 'travelagancy:result' %}" method="post">
+                    {% csrf_token %}
+
+            <div class="col-sm-3"> 
+                        <span class="ico_search_type ico_search_lcity"></span><br>
+                        {% comment %} <input class="my_input" type="text" id="leave_city" name="leave_city" placeholder="City"
+                               value="{{ leave_city|default_if_none:"" }}"> {% endcomment %}
+                <select id="leave_city" name="leave_city" class="form-control" value="{{ leave_city|default_if_none:"" }}" >
+                        {% include "travelagancy/countrylist.html" %}
+                    </select>
+            </div>
+                    <div class="col-sm-3">
+                        <span class="ico_search_type ico_search_acity"></span><br>
+                        {% comment %} <input class="my_input" type="text" id="arrive_city" name="arrive_city" placeholder="City"
+                               value="{{ arrive_city|default_if_none:"" }}"> {% endcomment %}
+                        <select id="arrive_city" name="arrive_city" class="form-control" value="{{ arrive_city|default_if_none:"" }}" >
+                        {% include "travelagancy/countrylist.html" %}
+                    </select>
+                    </div>
+                    
+                    <div class="col-sm-3">
+                        <span class="ico_search_type ico_search_ldate"></span><br>
+                        <input class="my_input" type="date" id="leave_date" name="leave_date" placeholder="Date"
+                               value="{{ leave_date }}" min='{{now}}'>
+                    </div>
+                 
+<fieldset class="row mb-3">
+    <div class="col-sm-10">
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="gridRadios" id="one_way" value="one_way" checked>
+        <label class="form-check-label" for="gridRadios1">
+          One-Way
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="gridRadios" id="two_way" value="two_way">
+        <label class="form-check-label" for="gridRadios2">
+          Two-Way
+        </label>
+      </div>
+
+
+
+<div style=display:row>
+    <input type="checkbox" id="want_price_range" name="want_price_range"  >
+    <span style="large;">price range</span>
+    <input type="range" id="rangeInput" name="rangeInput" value="24" max="{{max_price}}"  oninput="this.nextElementSibling.value = this.value" disabled  >
+    <output>24</output>
+</div>
+<script>
+  // Get references to the checkbox and range input
+  const want_price_range = document.getElementById('want_price_range');
+  const rangeInput = document.getElementById('rangeInput');
+
+  // Add an event listener to the checkbox to toggle the disabled attribute of the range input
+  want_price_range.addEventListener('change', (event) => {
+    rangeInput.disabled = !event.target.checked;
+  });
+</script>
+
+    </div>
+  </fieldset>
+  
+        <div class="col-sm-3">
+            <div style="position: absolute;margin-top: -50px;">
+                <input class="btn btn btn-info" name="research_btn" type="submit" value="search">
+            </div>
+        </div>
+
+        </form>
+    </div>
+</div>
+
+        <div class="search_head" id="search_head" style="display: {{ dis_search_head }} ">
+            <div class="col-sm-14">
+            <br>
+                <button class="col-sm-3 btn btn-primary">Flight Information</button>
+                <button class="col-sm-3 btn btn-success" onclick="search_by_ltime()">Departure Time</button>
+                <button class="col-sm-3 btn btn-danger" onclick="search_by_atime()">Time of arrival</button>
+                <button class="col-sm-1 btn btn-warning" onclick="search_by_price()">Price Up</button>
+                <button class="col-sm-1 btn btn-warning" onclick="search_by_pricedown()">Price Down</button>
+                <button class="col-sm-1 btn btn-warning" onclick="search_by_rate()">Rate</button>
+            </div>
+        </div>
+
+        <div class="alert" id="search_failure"
+             style="margin-top: 20px; background-color:white;display: {{ dis_search_failure }}">
+            <h1>Dear Passanger</h1>
+            <p style="margin-left: 50px">
+                Sorry, we do not currently operate this flight, please try to choose another flight, I wish you a pleasant journey!
+            </p>
+        </div>
+
+        <div class="search_result_by_price" id="result_by_price">
+            {% for flight in usable_flights_by_price %}
+                <div class="one_line">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <p class="flight_name">{{ flight.name }}</p> 
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px"> 
+                                <span style="font-size: x-large">{{ flight.leave_time }}</span>
+                                <br>
+                                {{ flight.leave_airport }}
+                                {{ flight.leave_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px">
+                                <span style="font-size: x-large">{{ flight.arrive_time }}</span>
+                                <br>
+                                {{ flight.arrive_airport }}
+                                {{ flight.arrive_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 22px 0;">
+                                <span style="position:absolute;margin-top: 10px;margin-left: -50px;
+                                    font-size:smaller;color: gray;">Rate</span>
+                                <span style="position:absolute;margin-top: 26px;margin-left: -47px;
+                                    font-size:smaller;color: gray">{{ flight.book_sum }}/{{flight.capacity}}</span>
+                                <sup>₪</sup>
+                                <span style="color: #ff6600;font-size: xx-large;">{{ flight.price }}</span>
+                                <sub>start</sub>&nbsp;
+                                <a href="{% url 'travelagancy:book_ticket' flight.id %}"
+                                   class="btn btn-sm btn-warning">book tickets</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="search_result_by_rate" id="result_by_rate" style="display: none">
+            {% for flight in usable_flights_by_rate %}
+                <div class="one_line">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <p class="flight_name">{{ flight.name }}</p> 
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px"> 
+                                <span style="font-size: x-large">{{ flight.leave_time }}</span>
+                                <br>
+                                {{ flight.leave_airport }}
+                                 {{ flight.leave_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px">
+                                <span style="font-size: x-large">{{ flight.arrive_time }}</span>
+                                <br>
+                                {{ flight.arrive_airport }}
+                                {{ flight.arrive_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 22px 0;">
+                                <span style="position:absolute;margin-top: 10px;margin-left: -50px;
+                                    font-size:smaller;color: gray;">Rate</span>
+                                <span style="position:absolute;margin-top: 26px;margin-left: -47px;
+                                    font-size:smaller;color: gray">{{ flight.book_sum }}/{{flight.capacity}}</span>
+                                <sup>₪</sup>
+                                <span style="color: #ff6600;font-size: xx-large;">{{ flight.price }}</span>
+                                <sub>start</sub>&nbsp;
+                                <a href="{% url 'travelagancy:book_ticket' flight.id %}"
+                                   class="btn btn-sm btn-warning">book tickets</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+
+
+
+
+
+        <div class="search_result_by_ltime" id="result_by_ltime" style="display: none">
+            {% for flight in usable_flights_by_ltime %}
+                <div class="one_line">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <p class="flight_name">{{ flight.name }}</p> 
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px"> 
+                                <span style="font-size: x-large">{{ flight.leave_time }}</span>
+                                <br>
+                                {{ flight.leave_airport }}
+                                 {{ flight.leave_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px">
+                                <span style="font-size: x-large">{{ flight.arrive_time }}</span>
+                                <br>
+                                {{ flight.arrive_airport }}
+                                {{ flight.arrive_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 22px 0;">
+                                <span style="position:absolute;margin-top: 10px;margin-left: -50px;
+                                    font-size:smaller;color: gray;">Rate</span>
+                                <span style="position:absolute;margin-top: 26px;margin-left: -47px;
+                                    font-size:smaller;color: gray">{{ flight.book_sum }}/{{flight.capacity}}</span>
+                                <sup>₪</sup>
+                                <span style="color: #ff6600;font-size: xx-large;">{{ flight.price }}</span>
+                                <sub>start</sub>&nbsp;
+                                <a href="{% url 'travelagancy:book_ticket' flight.id %}"
+                                   class="btn btn-sm btn-warning">book tickets</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+
+
+        <div class="search_result_by_atime" id="result_by_atime" style="display: none">
+            {% for flight in usable_flights_by_atime %}
+                <div class="one_line">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <p class="flight_name">{{ flight.name }}</p> 
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px"> 
+                                <span style="font-size: x-large">{{ flight.leave_time }}</span>
+                                <br>
+                                {{ flight.leave_airport }}
+                                 {{ flight.leave_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px">
+                                <span style="font-size: x-large">{{ flight.arrive_time }}</span>
+                                <br>
+                                {{ flight.arrive_airport }}
+                                {{ flight.arrive_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 22px 0;">
+                                <span style="position:absolute;margin-top: 10px;margin-left: -50px;
+                                    font-size:smaller;color: gray;">Rate</span>
+                                <span style="position:absolute;margin-top: 26px;margin-left: -47px;
+                                    font-size:smaller;color: gray">{{ flight.book_sum }}/{{flight.capacity}}</span>
+                                <sup>₪</sup>
+                                <span style="color: #ff6600;font-size: xx-large;">{{ flight.price }}</span>
+                                <sub>start</sub>&nbsp;
+                                <a href="{% url 'travelagancy:book_ticket' flight.id %}"
+                                   class="btn btn-sm btn-warning">book tickets</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+
+<div class="search_result_by_pricedown" id="result_by_pricedown" style="display: none">
+            {% for flight in usable_flights_by_pricedown %}
+                <div class="one_line">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <p class="flight_name">{{ flight.name }}</p> 
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px"> 
+                                <span style="font-size: x-large">{{ flight.leave_time }}</span>
+                                <br>
+                                {{ flight.leave_airport }}
+                                 {{ flight.leave_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px">
+                                <span style="font-size: x-large">{{ flight.arrive_time }}</span>
+                                <br>
+                                {{ flight.arrive_airport }}
+                                {{ flight.arrive_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 22px 0;">
+                                <span style="position:absolute;margin-top: 10px;margin-left: -50px;
+                                    font-size:smaller;color: gray;">Rate</span>
+                                <span style="position:absolute;margin-top: 26px;margin-left: -47px;
+                                    font-size:smaller;color: gray">{{ flight.book_sum }}/{{flight.capacity}}</span>
+                                <sup>₪</sup>
+                                <span style="color: #ff6600;font-size: xx-large;">{{ flight.price }}</span>
+                                <sub>start</sub>&nbsp;
+                                <a href="{% url 'travelagancy:book_ticket' flight.id %}"
+                                   class="btn btn-sm btn-warning">book tickets</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %}  teo wayy flights {% endcomment %}
+
+{% if is_two_way %}
+
+    <div class="main">
+       
+        <div class="search_head" id="search_head" style="display: {{ back_dis_search_head }} ">
+         <h2>Way Back (for two ways only)</h2>
+            <div class="col-sm-14">
+            <br>
+                <button class="col-sm-3 btn btn-primary">Flight Information</button>
+                <button class="col-sm-3 btn btn-success" onclick="back_search_by_ltime()">Departure Time</button>
+                <button class="col-sm-3 btn btn-danger" onclick="back_search_by_atime()">Time of arrival</button>
+                <button class="col-sm-1 btn btn-warning" onclick="back_search_by_price()">Price Up</button>
+                <button class="col-sm-1 btn btn-warning" onclick="back_search_by_pricedown()">Price Down</button>
+                <button class="col-sm-1 btn btn-warning" onclick="back_search_by_rate()">Rate</button>
+
+            </div>
+        </div>
+
+        <div class="alert" id="back_search_failure"
+             style="margin-top: 20px; background-color:white;display: {{ back_dis_search_failure }}">
+            <h1>Dear Passanger</h1>
+            <p style="margin-left: 50px">
+                Sorry, we do not currently have a flight back
+            </p>
+        </div>
+
+        <div class="back_search_result_by_price" id="back_result_by_price">
+            {% for flight in back_flights_by_price %}
+                <div class="one_line">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <p class="flight_name">{{ flight.name }}</p> 
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px"> 
+                                <span style="font-size: x-large">{{ flight.leave_time }}</span>
+                                <br>
+                                {{ flight.leave_airport }}
+                                 {{ flight.leave_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px">
+                                <span style="font-size: x-large">{{ flight.arrive_time }}</span>
+                                <br>
+                                {{ flight.arrive_airport }}
+                                {{ flight.arrive_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 22px 0;">
+                                <span style="position:absolute;margin-top: 10px;margin-left: -50px;
+                                    font-size:smaller;color: gray;">Rate</span>
+                                <span style="position:absolute;margin-top: 26px;margin-left: -47px;
+                                    font-size:smaller;color: gray">{{ flight.book_sum }}/{{flight.capacity}}</span>
+                                <sup>₪</sup>
+                                <span style="color: #ff6600;font-size: xx-large;">{{ flight.price }}</span>
+                                <sub>start</sub>&nbsp;
+                                <a href="{% url 'travelagancy:book_ticket' flight.id %}"
+                                   class="btn btn-sm btn-warning">book tickets</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="back_search_result_by_rate" id="back_result_by_rate" style="display: none">
+            {% for flight in back_flights_by_rate %}
+                <div class="one_line">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <p class="flight_name">{{ flight.name }}</p> 
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px"> 
+                                <span style="font-size: x-large">{{ flight.leave_time }}</span>
+                                <br>
+                                {{ flight.leave_airport }}
+                                 {{ flight.leave_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px">
+                                <span style="font-size: x-large">{{ flight.arrive_time }}</span>
+                                <br>
+                                {{ flight.arrive_airport }}
+                                {{ flight.arrive_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 22px 0;">
+                                <span style="position:absolute;margin-top: 10px;margin-left: -50px;
+                                    font-size:smaller;color: gray;">Rate</span>
+                                <span style="position:absolute;margin-top: 26px;margin-left: -47px;
+                                    font-size:smaller;color: gray">{{ flight.book_sum }}/{{flight.capacity}}</span>
+                                <sup>₪</sup>
+                                <span style="color: #ff6600;font-size: xx-large;">{{ flight.price }}</span>
+                                <sub>start</sub>&nbsp;
+                                <a href="{% url 'travelagancy:book_ticket' flight.id %}"
+                                   class="btn btn-sm btn-warning">book tickets</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+
+
+
+
+
+
+        <div class="back_search_result_by_ltime" id="back_result_by_ltime" style="display: none">
+            {% for flight in back_flights_by_ltime %}
+                <div class="one_line">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <p class="flight_name">{{ flight.name }}</p> 
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px"> 
+                                <span style="font-size: x-large">{{ flight.leave_time }}</span>
+                                <br>
+                                {{ flight.leave_airport }}
+                                 {{ flight.leave_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px">
+                                <span style="font-size: x-large">{{ flight.arrive_time }}</span>
+                                <br>
+                                {{ flight.arrive_airport }}
+                                {{ flight.arrive_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 22px 0;">
+                                <span style="position:absolute;margin-top: 10px;margin-left: -50px;
+                                    font-size:smaller;color: gray;">Rate</span>
+                                <span style="position:absolute;margin-top: 26px;margin-left: -47px;
+                                    font-size:smaller;color: gray">{{ flight.book_sum }}/{{flight.capacity}}</span>
+                                <sup>₪</sup>
+                                <span style="color: #ff6600;font-size: xx-large;">{{ flight.price }}</span>
+                                <sub>start</sub>&nbsp;
+                                <a href="{% url 'travelagancy:book_ticket' flight.id %}"
+                                   class="btn btn-sm btn-warning">book tickets</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+
+
+        <div class="back_search_result_by_atime" id="back_result_by_atime" style="display: none">
+            {% for flight in back_flights_by_atime %}
+                <div class="one_line">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <p class="flight_name">{{ flight.name }}</p> 
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px"> 
+                                <span style="font-size: x-large">{{ flight.leave_time }}</span>
+                                <br>
+                                {{ flight.leave_airport }}
+                                 {{ flight.leave_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px">
+                                <span style="font-size: x-large">{{ flight.arrive_time }}</span>
+                                <br>
+                                {{ flight.arrive_airport }}
+                                {{ flight.arrive_city }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 22px 0;">
+                                <span style="position:absolute;margin-top: 10px;margin-left: -50px;
+                                    font-size:smaller;color: gray;">Rate</span>
+                                <span style="position:absolute;margin-top: 26px;margin-left: -47px;
+                                    font-size:smaller;color: gray">{{ flight.book_sum }}/{{flight.capacity}}</span>
+                                <sup>₪</sup>
+                                <span style="color: #ff6600;font-size: xx-large;">{{ flight.price }}</span>
+                                <sub>start</sub>&nbsp;
+                                <a href="{% url 'travelagancy:book_ticket' flight.id %}"
+                                   class="btn btn-sm btn-warning">book tickets</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+
+<div class="back_search_result_by_pricedown" id="back_result_by_pricedown" style="display: none">
+            {% for flight in back_flights_by_pricedown %}
+                <div class="one_line">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <p class="flight_name">{{ flight.name }}</p> 
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px"> 
+                                <span style="font-size: x-large">{{ flight.leave_time }}</span>
+                                <br>
+                                {{ flight.leave_airport }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 10px">
+                                <span style="font-size: x-large">{{ flight.arrive_time }}</span>
+                                <br>
+                                {{ flight.arrive_airport }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p style="padding: 22px 0;">
+                                <span style="position:absolute;margin-top: 10px;margin-left: -50px;
+                                    font-size:smaller;color: gray;">Rate</span>
+                                <span style="position:absolute;margin-top: 26px;margin-left: -47px;
+                                    font-size:smaller;color: gray">{{ flight.book_sum }}/{{flight.capacity}}</span>
+                                <sup>₪</sup>
+                                <span style="color: #ff6600;font-size: xx-large;">{{ flight.price }}</span>
+                                <sub>start</sub>&nbsp;
+                                <a href="{% url 'travelagancy:book_ticket' flight.id %}"
+                                   class="btn btn-sm btn-warning">book tickets</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+
+    </div>
+
+
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

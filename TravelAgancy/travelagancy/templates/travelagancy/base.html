@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SkyAirline</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+ @import url('https://fonts.googleapis.com/css?family=Josefin+Sans');
+
+.input_s2 {
+    min-width: 30%;
+    max-width: 30%;
+    padding: 5px 5px;
+    margin-top: 4px;
+    background: #f8cacd;
+    color: black;
+    font-weight: 700;
+    border: 2px solid #ffffff;
+    border-radius: 8px;
+    text-align: center;
+}
+</style>
+
+
+
+
+    {#    <link rel="stylesheet" href="../../static/css/bootstrap.min.css">#}
+    {% block style %}
+    {% endblock %}
+    {% block js %}
+    {% endblock %}
+</head>
+<body style="background-color: #f1f1f1">
+<nav class="nav navbar-inverse">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{% url 'travelagancy:index' %}">SkyAirline</a>
+        </div>
+        <!-- Items -->
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a href="{% url 'travelagancy:showall' %}">
+                    <span class="glyphicon glyphicon-plane" aria-hidden="true"></span>&nbsp; show all flights
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'travelagancy:result' %}">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true" ></span>&nbsp; buy tickets
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'travelagancy:user_info' %}">
+                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp; Profile
+                </a>
+            </li>
+            <li>
+                {% block login_display %}
+                    <a href="{% url 'travelagancy:login_user' %}">
+                        <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp; Log in
+                    </a>
+                {% endblock %}
+            </li>
+            <li>
+                <a href="{% url 'travelagancy:logout_user' %}">
+                    <span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp; Log out
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+{% block content %}
+{% endblock %}
+
+</body>
+</html>
+
